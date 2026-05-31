@@ -264,13 +264,16 @@ const cerrarModalEditar = () => mostrarModalEditar.value = false
 
 const guardarEdicionPlan = async () => {
   try {
-    const idPlan = plan.value.id_plan
+    const idPlan = plan.value.id_plan;
+    
+    // Validar estado
     if (editData.value.estado === 'Borrador') {
-      editData.value.visibilidad = 'Privado'
+      editData.value.visibilidad = 'Privado';
     }
 
     const acabaDeFinalizar = editData.value.estado === 'Realizado' && plan.value.estado !== 'Realizado';
 
+    // 💡 CORRECCIÓN AQUÍ: Habías puesto 'payloadLinter' que no existe
     const payloadLimpio = {
       nombre_viaje: editData.value.nombre_viaje,
       fecha_inicio: editData.value.fecha_inicio,
@@ -279,17 +282,20 @@ const guardarEdicionPlan = async () => {
       visibilidad: editData.value.visibilidad
     };
 
-    await apiViajes.patch(`/planes/${idPlan}`, payloadLinter || payloadLimpio)
-    await cargarDetallePlan()
-    cerrarModalEditar()
+    // Enviamos el payload correctamente
+    await apiViajes.patch(`/planes/${idPlan}`, payloadLimpio);
+    
+    await cargarDetallePlan();
+    cerrarModalEditar();
 
     if (acabaDeFinalizar) {
-      if (confirm('¡Bienvenido de vuelta viajero! 🎉\n\n¿Te gustaría registrar tus gastos reales y calificar los destinos para ayudar a otros exploradores?')) {
+      if (confirm('¡Bienvenido de vuelta viajero! 🎉\n\n¿Te gustaría registrar tus gastos reales?')) {
         alert('Próximamente: Te llevaremos al formulario para registrar tu Experiencia oficial.');
       }
     }
   } catch (error) {
-    alert('Error al actualizar la información del plan')
+    console.error("Detalle del error:", error.response?.data || error); // 💡 Mira esto en F12
+    alert('Error al actualizar la información del plan');
   }
 }
 
@@ -428,12 +434,69 @@ onMounted(() => {
 .btn-quitar { background: #fee2e2; border: none; padding: 10px; border-radius: 8px; cursor: pointer; transition: background 0.2s; margin-left: 15px; }
 .btn-quitar:hover { background: #fca5a5; }
 
-/* MODALES GENERALES */
+/* MODALES GENERALES 
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); }
 .modal-content { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto;}
 .modal-content.modal-largo { max-width: 600px; }
 .modal-content h2 { margin-top: 0; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; }
+.modal-intro { color: #64748b; font-size: 0.95rem; margin-bottom: 20px; line-height: 1.4; }*/
+
+/* ======================================= */
+/* MODALES GENERALES Y FACTURA             */
+/* ======================================= */
+.modal-overlay { 
+  position: fixed; 
+  top: 0; left: 0; right: 0; bottom: 0; 
+  background: rgba(15, 23, 42, 0.75); 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  z-index: 1000; 
+  backdrop-filter: blur(3px); 
+  padding: 20px; 
+  box-sizing: border-box; 
+}
+
+.modal-content { 
+  background: white; 
+  padding: 30px; 
+  border-radius: 15px; 
+  width: 100%; 
+  max-width: 500px; 
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); 
+  max-height: 85vh; /* 💡 ALTURA MÁXIMA PARA FORZAR EL SCROLL */
+  overflow-y: auto; /* 💡 EL SCROLL MAESTRO VIVE AQUÍ */
+}
+
+.modal-content.modal-largo { 
+  max-width: 650px; 
+}
+
+.modal-content h2 { margin-top: 0; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; }
 .modal-intro { color: #64748b; font-size: 0.95rem; margin-bottom: 20px; line-height: 1.4; }
+
+/* 💡 ESTILOS DE LA FACTURA LIBERADOS */
+.factura-container { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 20px; 
+  max-height: none !important; 
+  overflow-y: visible !important; 
+}
+
+.factura-destino { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+.factura-header { background: #f8fafc; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
+.factura-header h3 { margin: 0; font-size: 1.1rem; color: #1e293b; }
+.factura-header h3 span { color: #64748b; font-size: 0.9rem; font-weight: normal; }
+.subtotal-badge { background: #dbeafe; color: #1d4ed8; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; }
+
+.tabla-costos { width: 100%; border-collapse: collapse; }
+.tabla-costos td { padding: 12px 10px; border-bottom: 1px solid #e2e8f0; font-size: 0.95rem; color: #334155; }
+.text-right { text-align: right !important; }
+.font-mono { font-family: monospace; font-size: 1.05rem; }
+
+.factura-gran-total { display: flex; justify-content: space-between; align-items: center; background: #1e293b; color: white; padding: 15px 20px; border-radius: 8px; margin-top: 10px; font-size: 1.2rem; font-weight: bold; }
+.total-monto { color: #34d399; font-family: monospace; font-size: 1.4rem; }
 
 /* 💡 ESTILOS TABLA DE COSTOS */
 .tabla-costos { width: 100%; border-collapse: collapse; margin-bottom: 20px; }

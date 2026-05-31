@@ -32,7 +32,7 @@
             <div class="card-image-wrapper">
               <img :src="obtenerPortada(destino)" alt="foto" />
               <div class="admin-controls-overlay">
-                <button title="Gestionar Fotos" @click="abrirModalFotos(destino)">🖼️ Fotos</button>
+                <button title="Gestionar Fotos" @click="abrirModalFotos(destino, 'destino')">🖼️ Fotos</button>
                 <button title="Editar" @click="editarDestino(destino)">✏️ Editar</button>
                 <button title="Eliminar" class="btn-danger-icon" @click="eliminarDestino(destino.id_d)">🗑️</button>
               </div>
@@ -59,6 +59,7 @@
             <div class="card-image-wrapper">
               <img :src="obtenerPortada(atractivo)" alt="foto" />
               <div class="admin-controls-overlay">
+                <button title="Gestionar Fotos" @click="abrirModalFotos(atractivo, 'atractivo')">🖼️ Fotos</button>
                 <button title="Editar" @click="editarAtractivo(atractivo)">✏️ Editar</button>
                 <button title="Eliminar" class="btn-danger-icon" @click="eliminarAtractivo(atractivo.id_at)">🗑️</button>
               </div>
@@ -259,7 +260,6 @@ onMounted(() => {
 
 // --- 2. LÓGICA DE CREACIÓN (TODO EN UNO) ---
 
-// 💡 LISTA COMPLETA DE DEPARTAMENTOS
 const listaDepartamentos = ref([
   { id_dep: 1, nombre: 'Chuquisaca' },
   { id_dep: 2, nombre: 'La Paz' },
@@ -272,21 +272,18 @@ const listaDepartamentos = ref([
   { id_dep: 9, nombre: 'Pando' }
 ]);
 
-// Modales y formularios
 const mostrarModalCrearDestino = ref(false)
 const mostrarModalCrearAtractivo = ref(false)
 
 const nuevoDestino = ref({ nombre: '', descripcion_general: '', id_dep: 1, estado: 'aprobado' })
 const nuevoAtractivo = ref({ nombre: '', descripcion: '', id_destino: null, estado: 'aprobado' })
 
-// Archivos
 const archivoNuevoDestino = ref(null)
 const archivoNuevoAtractivo = ref(null)
 
 const capturarFotoDestino = (e) => archivoNuevoDestino.value = e.target.files[0]
 const capturarFotoAtractivo = (e) => archivoNuevoAtractivo.value = e.target.files[0]
 
-// Guardar Destino (Multipart)
 const guardarNuevoDestino = async () => {
   try {
     const formData = new FormData();
@@ -312,7 +309,6 @@ const guardarNuevoDestino = async () => {
   }
 }
 
-// Guardar Atractivo (Multipart)
 const guardarNuevoAtractivo = async () => {
   try {
     if (!nuevoAtractivo.value.id_destino && destinos.value.length > 0) {
@@ -396,7 +392,6 @@ const guardarEdicionGeneral = async () => {
   }
 }
 
-// Eliminación
 const eliminarDestino = async (id) => {
   if (confirm('¿Seguro que deseas eliminar este destino?')) {
     try { await apiViajes.delete(`/destinos/${id}`); await cargarDestinos(); } catch (e) { alert('Error') }
@@ -409,9 +404,10 @@ const eliminarAtractivo = async (id) => {
   }
 }
 
-// --- 4. LÓGICA DE FOTOS SECUNDARIAS (Intacta) ---
+// --- 4. LÓGICA DE FOTOS INTELIGENTE (Destinos y Atractivos) ---
 const modalAbierto = ref(false)
 const destinoActual = ref(null)
+const tipoItemFoto = ref('destino') // 💡 NUEVO: Controla a qué endpoint enviar la foto
 const archivoSeleccionado = ref(null)
 
 const procesarUrlImagen = (url) => {
@@ -425,26 +421,62 @@ const obtenerPortada = (item) => {
   return 'https://via.placeholder.com/400x200?text=Sin+Imagen';
 }
 
-const abrirModalFotos = (destino) => { destinoActual.value = destino; modalAbierto.value = true; }
-const cerrarModal = () => { modalAbierto.value = false; destinoActual.value = null; archivoSeleccionado.value = null; }
+// 💡 Actualizado para recibir el tipo (destino o atractivo)
+const abrirModalFotos = (item, tipo) => { 
+  destinoActual.value = item; 
+  tipoItemFoto.value = tipo;
+  modalAbierto.value = true; 
+}
+
+const cerrarModal = () => { 
+  modalAbierto.value = false; 
+  destinoActual.value = null; 
+  archivoSeleccionado.value = null; 
+}
+
 const seleccionarArchivo = (e) => archivoSeleccionado.value = e.target.files[0]
 
 const subirImagen = async () => {
   if (!archivoSeleccionado.value) return;
-  const formData = new FormData(); formData.append('file', archivoSeleccionado.value);
+  const formData = new FormData(); 
+  formData.append('file', archivoSeleccionado.value);
+  
   try {
-    await apiViajes.post(`/destinos/${destinoActual.value.id_d}/imagenes`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    // 💡 Decidimos dinámicamente la URL en base al tipo
+    const urlEndpoint = tipoItemFoto.value === 'destino' 
+      ? `/destinos/${destinoActual.value.id_d}/imagenes` 
+      : `/destinos/atractivos/${destinoActual.value.id_at}/imagenes`;
+
+    await apiViajes.post(urlEndpoint, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
     alert('¡Foto guardada localmente con éxito! 📸');
-    await cargarDestinos(); cerrarModal(); 
-  } catch (error) { alert('Error al subir la imagen.'); }
+    
+    // Recargamos la lista correspondiente
+    if (tipoItemFoto.value === 'destino') {
+      await cargarDestinos(); 
+    } else {
+      await cargarAtractivos();
+    }
+    cerrarModal(); 
+  } catch (error) { 
+    alert('Error al subir la imagen.'); 
+  }
 }
 
 const eliminarImagen = async (idImg) => {
   if(confirm('¿Borrar esta imagen permanentemente?')) {
     try {
+      // El endpoint de borrado funciona para ambos (busca por id de imagen)
       await apiViajes.delete(`/destinos/imagenes/${idImg}`);
-      if (destinoActual.value?.imagenes) destinoActual.value.imagenes = destinoActual.value.imagenes.filter(img => img.id_img !== idImg);
-      await cargarDestinos(); 
+      
+      if (destinoActual.value?.imagenes) {
+        destinoActual.value.imagenes = destinoActual.value.imagenes.filter(img => img.id_img !== idImg);
+      }
+      
+      if (tipoItemFoto.value === 'destino') {
+        await cargarDestinos(); 
+      } else {
+        await cargarAtractivos();
+      }
     } catch (error) { alert('❌ Error al borrar.'); }
   }
 }
