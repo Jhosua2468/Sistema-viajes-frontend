@@ -7,6 +7,7 @@
         <button @click="vistaActiva = 'destinos'" :class="{ active: vistaActiva === 'destinos' }">🗺️ Destinos Visual</button>
         <button @click="vistaActiva = 'atractivos'" :class="{ active: vistaActiva === 'atractivos' }">✨ Atractivos</button>
         <button @click="vistaActiva = 'usuarios'" :class="{ active: vistaActiva === 'usuarios' }">👥 Usuarios</button>
+        <button @click="vistaActiva = 'experiencias'" :class="{ active: vistaActiva === 'experiencias' }">🛡️ Gestión Experiencias</button>
         <button>👤 Mi Perfil</button>
         
         <hr style="border-color: #334155; margin: 10px 0;">
@@ -82,6 +83,72 @@
         </div>
         <p>Aquí irá la tabla de usuarios registrados...</p>
       </section>
+
+      <!-- VISTA: GESTIÓN DE EXPERIENCIAS -->
+      <div v-if="vistaActiva === 'experiencias'" class="content-section">
+        <div class="section-header">
+          <div>
+            <h2>🛡️ Gestión de Experiencias</h2>
+            <p>Supervisa las publicaciones de los viajeros y elimina datos anómalos.</p>
+          </div>
+          
+          <div style="background: white; padding: 10px 15px; border-radius: 8px; border: 1px solid #cbd5e1; display: flex; align-items: center; gap: 10px;">
+            <label style="font-weight: bold; color: #475569;">Filtro:</label>
+            <select v-model="filtroDestinoAdmin" style="padding: 5px; border-radius: 4px; border: 1px solid #cbd5e1;">
+              <option value="">🌍 Todos los destinos</option>
+              <option v-for="dest in destinos" :key="dest.id_d" :value="dest.nombre">
+                {{ dest.nombre }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Viajero</th>
+                <th>Destino</th>
+                <th>Calificación</th>
+                <th>Resumen (Extracto)</th>
+                <th>Gasto Reportado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="exp in experienciasFiltradas" :key="exp.id_exp">
+                <td>
+                  <strong>{{ exp.usuario?.nombre || 'Anónimo' }}</strong>
+                  <br><small style="color: #64748b;">{{ exp.fecha_viaje }}</small>
+                </td>
+                <td>
+                  <span class="badge-blue">{{ exp.destino?.nombre }}</span>
+                </td>
+                <td>
+                  <span style="color: #f59e0b; font-weight: bold;">
+                    ⭐ {{ exp.valoraciones?.[0]?.puntuacion || 0 }}
+                  </span>
+                </td>
+                <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  {{ exp.resumen_experiencia }}
+                </td>
+                <td class="text-right font-mono" :class="{'alerta-gasto': calcularTotalGasto(exp.costos) > 5000}">
+                  Bs. {{ calcularTotalGasto(exp.costos) }}
+                </td>
+                <td style="display: flex; gap: 8px;">
+                  <button @click="verDesglose(exp)" class="btn-secondary" style="padding: 6px 10px; font-size: 0.8rem;">🔍 Detalle</button>
+                  <button @click="eliminarExperiencia(exp.id_exp)" class="btn-quitar" style="padding: 6px 10px; font-size: 0.8rem;" title="Eliminar">🗑️</button>
+                </td>
+              </tr>
+              <tr v-if="experienciasFiltradas.length === 0">
+                <td colspan="6" class="text-center" style="padding: 30px; color: #64748b;">
+                  No hay experiencias que coincidan con el filtro.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </main>
 
     <div v-if="mostrarModalCrearDestino" class="modal-overlay" @click.self="mostrarModalCrearDestino = false">
@@ -216,12 +283,54 @@
         </div>
       </div>
     </div>
+    <div v-if="modalDesgloseAbierto" class="modal-overlay" @click.self="modalDesgloseAbierto = false">
+      <div class="modal-content">
+        <header class="modal-header">
+          <h3>💰 Desglose de: {{ experienciaEnFoco?.usuario?.nombre || 'Viajero' }}</h3>
+          <button class="btn-close" @click="modalDesgloseAbierto = false">✖</button>
+        </header>
+        <div class="modal-body">
+          <p style="margin-top: 0; color: #64748b;">
+            <strong>Destino:</strong> {{ experienciaEnFoco?.destino?.nombre }} <br>
+            <strong>Fecha:</strong> {{ experienciaEnFoco?.fecha_viaje }}
+          </p>
+          
+          <table class="tabla-costos" style="margin-top: 15px;">
+            <thead>
+              <tr>
+                <th>Categoría</th>
+                <th>Descripción / Nota</th>
+                <th class="text-right">Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="costo in experienciaEnFoco?.costos" :key="costo.id_costo">
+                <td style="font-weight: bold;">{{ costo.categoria }}</td>
+                <td style="font-size: 0.85rem; color: #64748b;">{{ costo.descripcion_gasto }}</td>
+                <td class="text-right font-mono text-blue-600">Bs. {{ costo.monto }}</td>
+              </tr>
+              <tr style="background: #f1f5f9; font-weight: bold;">
+                <td colspan="2" class="text-right">TOTAL REPORTADO:</td>
+                <td class="text-right font-mono" style="color: #ef4444;">
+                  Bs. {{ calcularTotalGasto(experienciaEnFoco?.costos) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+            <strong style="color: #0f172a;">📝 Resumen del viaje:</strong>
+            <p style="font-style: italic; color: #475569; margin-bottom: 0;">"{{ experienciaEnFoco?.resumen_experiencia }}"</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../store/auth'
 import apiViajes from '../api/axios'
@@ -233,6 +342,7 @@ const authStore = useAuthStore()
 const vistaActiva = ref('destinos')
 const destinos = ref([])
 const atractivos = ref([])
+const listaExperiencias = ref([])
 
 // Cargas iniciales
 const cargarDestinos = async () => {
@@ -253,9 +363,38 @@ const cargarAtractivos = async () => {
   }
 }
 
+// Función para traer la data cruzada
+const cargarExperienciasAdmin = async () => {
+  try {
+    const respuesta = await apiViajes.get('/experiencias');
+    listaExperiencias.value = respuesta.data;
+  } catch (error) {
+    console.error("Error al cargar experiencias:", error);
+  }
+}
+// Función para eliminar una experiencia troll/falsa
+const eliminarExperiencia = async (idExp) => {
+  if (confirm('¿Estás seguro de eliminar esta experiencia? Se borrarán sus costos asociados y el cálculo volverá a la normalidad.')) {
+    try {
+      await apiViajes.delete(`/experiencias/${idExp}`);
+      await cargarExperienciasAdmin(); // Recargar la tabla
+    } catch (error) {
+      alert('Error al eliminar la experiencia');
+    }
+  }
+}
+
+// Función auxiliar para sumar el dinero de una experiencia en el frontend
+// su finalidad es dar una alerta visual al admin si el gasto reportado es excesivo (ej: > 5000 Bs) y así detectar posibles trolls o datos erróneos que puedan distorsionar las estadísticas de presupuesto.
+const calcularTotalGasto = (costos) => {
+  if (!costos || costos.length === 0) return 0;
+  return costos.reduce((acumulador, costo) => acumulador + Number(costo.monto), 0).toFixed(2);
+}
+
 onMounted(() => {
   cargarDestinos()
   cargarAtractivos()
+  cargarExperienciasAdmin()
 })
 
 // --- 2. LÓGICA DE CREACIÓN (TODO EN UNO) ---
@@ -481,6 +620,25 @@ const eliminarImagen = async (idImg) => {
   }
 }
 
+// 💡 VARIABLES PARA FILTROS Y DESGLOSE
+const filtroDestinoAdmin = ref('');
+const modalDesgloseAbierto = ref(false);
+const experienciaEnFoco = ref(null);
+
+// 💡 COMPUTED PARA FILTRAR LA TABLA EN TIEMPO REAL
+const experienciasFiltradas = computed(() => {
+  if (!filtroDestinoAdmin.value) {
+    return listaExperiencias.value;
+  }
+  return listaExperiencias.value.filter(exp => exp.destino?.nombre === filtroDestinoAdmin.value);
+});
+
+// 💡 FUNCIÓN PARA ABRIR EL MODAL DE DESGLOSE
+const verDesglose = (exp) => {
+  experienciaEnFoco.value = exp;
+  modalDesgloseAbierto.value = true;
+};
+
 const cerrarSesion = () => {
   authStore.logout()
   router.push('/login')
@@ -544,4 +702,64 @@ const cerrarSesion = () => {
 .form-edicion label { display: block; margin-bottom: 5px; font-weight: bold; color: #334155; }
 .form-edicion input, .form-edicion textarea, .form-edicion select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
 .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+.alerta-gasto { color: #ef4444; font-weight: bold; } /* Se pone rojo si pasa de 5000 Bs */
+.badge-blue { background: #e0f2fe; color: #0284c7; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; }
+
+/* ======================================= */
+/* TABLAS DE GESTIÓN (EXPERIENCIAS)        */
+/* ======================================= */
+.table-container {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid #e2e8f0;
+  overflow-x: auto; /* Permite scroll horizontal si la pantalla es pequeña */
+  margin-top: 20px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th {
+  background-color: #f8fafc;
+  padding: 15px;
+  font-weight: bold;
+  color: #475569;
+  border-bottom: 2px solid #e2e8f0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.admin-table td {
+  padding: 15px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  font-size: 0.95rem;
+  vertical-align: middle;
+}
+
+.admin-table tbody tr:hover {
+  background-color: #f8fafc; /* Efecto al pasar el mouse por encima de la fila */
+}
+
+/* Clases utilitarias de la tabla */
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.font-mono { font-family: monospace; font-size: 1.1rem; }
+
+.btn-quitar {
+  background: #fee2e2;
+  color: #ef4444;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-quitar:hover { background: #fca5a5; }
 </style>

@@ -1,0 +1,42 @@
+name: CD - Despliegue a AWS (S3 + CloudFront)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: 2. Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 3. Instalar dependencias y Compilar (Vite)
+        run: |
+          npm ci
+          npm run build
+
+      - name: 4. Configurar credenciales AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: 5. Sincronizar carpeta dist con S3
+        run: |
+          aws s3 sync dist/ s3://${{ vars.AWS_S3_BUCKET }} \
+            --delete
+
+      - name: 6. Invalidar cache de CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"

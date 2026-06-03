@@ -135,8 +135,8 @@ onMounted(() => {
 .carousel-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 .carousel-img { flex: 0 0 300px; height: 200px; object-fit: cover; border-radius: 10px; scroll-snap-align: start; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
 
-.atractivos-list { display: flex; flex-direction: column; gap: 20px; }
-.atractivo-card { display: flex; flex-direction: column; background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+.atractivos-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 15px; }
+.atractivo-card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
 .atractivo-content h3 { margin: 0 0 10px 0; color: #3b82f6; }
 .atractivo-content p { margin: 0 0 15px 0; color: #64748b; line-height: 1.5; }
 .atractivo-carousel { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; }

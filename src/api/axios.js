@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const apiViajes = axios.create({
-  baseURL: 'http://localhost:3000',
+  // baseURL: 'http://localhost:3000', //local
+  baseURL: 'http://52.54.242.122:3000', // nube
   headers: {
     'Content-Type': 'application/json',
   },
