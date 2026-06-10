@@ -25,6 +25,7 @@
               ⚙️ Panel de Control
             </router-link>
             <router-link to="/mis-planes" class="dropdown-item">🗺️ Mis Planes</router-link>
+            <router-link to="/mis-experiencias" class="dropdown-item">📖 Mis Experiencias</router-link>
             <router-link to="/perfil" class="dropdown-item">👤 Mi Perfil</router-link>
             <div class="dropdown-divider"></div>
             <button @click="cerrarSesion" class="dropdown-item logout-item">🚪 Cerrar Sesión</button>

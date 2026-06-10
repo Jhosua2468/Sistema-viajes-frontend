@@ -77,11 +77,55 @@
         </div>
       </section>
       
+      <!-- VISTA: GESTIÓN DE USUARIOS -->
       <section v-if="vistaActiva === 'usuarios'" class="content-section">
         <div class="section-header">
-          <h3>Gestión de Usuarios</h3>
+          <div>
+            <h2>👥 Gestión de Usuarios</h2>
+            <p>Administra las cuentas registradas en la plataforma y verifica sus roles.</p>
+          </div>
         </div>
-        <p>Aquí irá la tabla de usuarios registrados...</p>
+
+        <div class="table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th class="text-center">ID</th>
+                <th>Nombre de Usuario</th>
+                <th>Correo Electrónico</th>
+                <th class="text-center">Rol del Sistema</th>
+                <th class="text-center">Acciones</th> </tr>
+            </thead>
+            <tbody>
+              <tr v-for="user in listaUsuarios" :key="user.id_u">
+                <td class="text-center font-mono">{{ user.id_u }}</td>
+                <td>
+                  <strong>{{ user.nombre }}</strong>
+                </td>
+                <td>{{ user.email }}</td>
+                <td class="text-center">
+                  <span :class="user.rol === 'admin' ? 'badge-admin' : 'badge-user'">
+                    {{ user.rol === 'admin' ? 'Administrador' : 'Viajero' }}
+                  </span>
+                </td>
+                
+                <td style="display: flex; gap: 8px; justify-content: center;">
+                  <button v-if="user.rol === 'usuario'" @click="cambiarRolUsuario(user.id_u, 'admin')" class="btn-secondary" style="padding: 6px 10px; font-size: 0.8rem;" title="Hacer Administrador">👑 Promover</button>
+                  
+                  <button v-else-if="user.rol === 'admin' && user.id_u !== authStore.usuario.id_u" @click="cambiarRolUsuario(user.id_u, 'usuario')" class="btn-secondary" style="padding: 6px 10px; font-size: 0.8rem;" title="Quitar permisos de Admin">👤 Degradar</button>
+                  
+                  <button v-if="user.id_u !== authStore.usuario.id_u" @click="eliminarUsuario(user.id_u)" class="btn-quitar" style="padding: 6px 10px; font-size: 0.8rem;" title="Eliminar cuenta">🗑️</button>
+                </td>
+                
+              </tr>
+              <tr v-if="listaUsuarios.length === 0">
+                <td colspan="5" class="text-center" style="padding: 30px; color: #64748b;">
+                  No hay usuarios registrados.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <!-- VISTA: GESTIÓN DE EXPERIENCIAS -->
@@ -111,8 +155,9 @@
                 <th>Destino</th>
                 <th>Calificación</th>
                 <th>Resumen (Extracto)</th>
-                <th>Gasto Reportado</th>
-                <th>Acciones</th>
+                <th class="text-center">Gasto Reportado</th>
+                <th class="text-center">Acciones</th>
+                
               </tr>
             </thead>
             <tbody>
@@ -343,6 +388,7 @@ const vistaActiva = ref('destinos')
 const destinos = ref([])
 const atractivos = ref([])
 const listaExperiencias = ref([])
+const listaUsuarios = ref([])
 
 // Cargas iniciales
 const cargarDestinos = async () => {
@@ -643,6 +689,49 @@ const cerrarSesion = () => {
   authStore.logout()
   router.push('/login')
 }
+
+// 💡 FUNCIÓN PARA CARGAR USUARIOS
+const cargarUsuariosAdmin = async () => {
+  try {
+    const respuesta = await apiViajes.get('/usuarios'); // Asegúrate de tener este endpoint
+    listaUsuarios.value = respuesta.data;
+  } catch (error) {
+    console.error("Error al cargar usuarios:", error);
+  }
+}
+
+// 💡 FUNCIÓN: CAMBIAR ROL DE USUARIO
+const cambiarRolUsuario = async (idUsuario, nuevoRol) => {
+  if (confirm(`¿Estás seguro de cambiar el rol de este usuario a "${nuevoRol}"?`)) {
+    try {
+      await apiViajes.patch(`/usuarios/${idUsuario}/rol`, { rol: nuevoRol });
+      await cargarUsuariosAdmin(); // Recargar la tabla
+    } catch (error) {
+      console.error("Error al cambiar rol:", error);
+      alert('Error al actualizar el rol del usuario.');
+    }
+  }
+}
+
+// 💡 FUNCIÓN: ELIMINAR USUARIO
+const eliminarUsuario = async (idUsuario) => {
+  if (confirm('¡PELIGRO! ¿Estás seguro de eliminar a este usuario? Se borrarán sus planes de viaje y experiencias registradas.')) {
+    try {
+      await apiViajes.delete(`/usuarios/${idUsuario}`);
+      await cargarUsuariosAdmin(); // Recargar la tabla
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      alert('Error al eliminar. Es posible que el usuario tenga registros vinculados que impidan su borrado.');
+    }
+  }
+}
+
+onMounted(() => {
+  cargarDestinos()
+  cargarAtractivos()
+  cargarExperienciasAdmin()
+  cargarUsuariosAdmin() // 💡 Llamamos a la función al iniciar
+}) 
 </script>
 
 <style scoped>
@@ -762,4 +851,14 @@ const cerrarSesion = () => {
   transition: all 0.2s;
 }
 .btn-quitar:hover { background: #fca5a5; }
+
+.badge-user { 
+  background-color: #dcfce7; 
+  color: #166534; 
+  padding: 5px 10px; 
+  border-radius: 20px; 
+  font-size: 0.8rem; 
+  font-weight: bold; 
+  text-transform: uppercase;
+}
 </style>
