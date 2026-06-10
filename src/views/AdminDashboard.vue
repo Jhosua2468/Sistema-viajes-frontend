@@ -598,7 +598,11 @@ const archivoSeleccionado = ref(null)
 const procesarUrlImagen = (url) => {
   if (!url) return 'https://via.placeholder.com/400x200?text=Sin+Imagen';
   if (url.startsWith('http')) return url;
-  return `http://localhost:3000${url.startsWith('/') ? '' : '/'}${url}`;
+  // === MODO LOCAL (Taller de Especialidad) ===
+  // return `http://localhost:3000${url.startsWith('/') ? '' : '/'}${url}`;
+  
+  // === MODO NUBE (Cloud de AWS) ===
+  return `http://52.54.242.122${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
 const obtenerPortada = (item) => {
