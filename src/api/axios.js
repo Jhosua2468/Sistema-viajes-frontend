@@ -2,7 +2,8 @@ import axios from 'axios';
 
 const apiViajes = axios.create({
   //baseURL: 'http://localhost:3000', //local
-  baseURL: 'http://52.54.242.122', // nube
+  //baseURL: 'http://52.54.242.122', // nube ip api viajes
+  baseURL: 'https://api-sistema-viajes.rootcode.com.bo', // nube dominio api viajes
   headers: {
     'Content-Type': 'application/json',
   },
