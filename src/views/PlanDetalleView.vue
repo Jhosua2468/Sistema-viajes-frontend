@@ -214,122 +214,137 @@
     </div>
     
     <div v-else class="loading">Cargando detalles del viaje...</div>
-    <!-- 💡 NUEVO MODAL: REGISTRO DE EXPERIENCIA -->
-      <div v-if="mostrarModalExperiencia" class="modal-overlay" @click.self="mostrarModalExperiencia = false">
-        <div class="modal-content modal-largo">
-          <h2>🌟 Cuéntanos tu Experiencia</h2>
-          <p class="modal-intro">Tu información ayuda a otros viajeros a calcular sus presupuestos reales.</p>
-          
-          <form @submit.prevent="enviarExperiencia" class="form-plan">
-            
-            <div class="input-group">
-              <label>📍 ¿De qué destino quieres hablar primero?</label>
-              <select v-model="nuevaExperiencia.id_destino" required>
-                <option v-for="detalle in plan.detalles" :key="detalle.id_dp" :value="detalle.destino.id_d">
-                  {{ detalle.destino.nombre }}
-                </option>
-              </select>
-            </div>
 
-            <div class="input-row">
-              <div class="input-group" style="flex: 2;">
-                <label>📝 Resumen del viaje (Mínimo 10 caracteres)</label>
-                <textarea v-model="nuevaExperiencia.resumen" rows="3" placeholder="¿Qué tal estuvo el clima? ¿Recomiendas algún lugar en especial?" required></textarea>
-              </div>
-              <div class="input-group" style="flex: 1;">
-                <label>⭐ Calificación</label>
-                <select v-model="nuevaExperiencia.estrellas">
-                  <option value="5">⭐⭐⭐⭐⭐ ¡Excelente!</option>
-                  <option value="4">⭐⭐⭐⭐ Muy bueno</option>
-                  <option value="3">⭐⭐⭐ Bueno</option>
-                  <option value="2">⭐⭐ Regular</option>
-                  <option value="1">⭐ Malo</option>
-                </select>
-              </div>
-            </div>
-
-            <h3 style="margin-top: 15px; margin-bottom: 10px; color: #1e293b; border-bottom: 2px dashed #e2e8f0; padding-bottom: 5px;">💸 Desglose de Gastos (Opcional)</h3>
-            <p style="font-size: 0.8rem; color: #64748b; margin-top: -5px; margin-bottom: 15px;">Anota el costo TOTAL que gastaste tú. Si no gastaste en algo, déjalo en 0.</p>
-
-            <button type="button" @click="mostrarDescripcionesGasto = !mostrarDescripcionesGasto" class="btn-toggle-desc">
-              {{ mostrarDescripcionesGasto ? '🔼 Ocultar detalles' : '📝 Añadir detalles de los gastos (Opcional)' }}
-            </button>
-
-            <div class="input-row">
-              <div class="input-group">
-                <label>🚌 Pasajes (Ida y vuelta)</label>
-                <div class="input-prefix">
-                  <span>Bs.</span>
-                  <input type="number" min="0" step="0.5" v-model="nuevaExperiencia.costos.Transporte" />
-                </div>
-                <input v-if="mostrarDescripcionesGasto" type="text" v-model="nuevaExperiencia.descripciones.Transporte" placeholder="Ej: Bus semicama nocturno" class="input-desc-opcional" />
-              </div>
-              
-              <div class="input-group">
-                <label>🏨 Hospedaje (Total estadía)</label>
-                <div class="input-prefix">
-                  <span>Bs.</span>
-                  <input type="number" min="0" step="0.5" v-model="nuevaExperiencia.costos.Hospedaje" />
-                </div>
-                <input v-if="mostrarDescripcionesGasto" type="text" v-model="nuevaExperiencia.descripciones.Hospedaje" placeholder="Ej: Hostal cerca a la plaza" class="input-desc-opcional" />
-              </div>
-            </div>
-            
-            <div class="input-row">
-              <div class="input-group">
-                <label>🍽️ Alimentación (Total)</label>
-                <div class="input-prefix">
-                  <span>Bs.</span>
-                  <input type="number" min="0" step="0.5" v-model="nuevaExperiencia.costos.Alimentacion" />
-                </div>
-                <input v-if="mostrarDescripcionesGasto" type="text" v-model="nuevaExperiencia.descripciones.Alimentacion" placeholder="Ej: Comidas en el mercado central" class="input-desc-opcional" />
-              </div>
-              <div class="input-group">
-                <label>🎟️ Actividades / Entradas</label>
-                <div class="input-prefix">
-                  <span>Bs.</span>
-                  <input type="number" min="0" step="0.5" v-model="nuevaExperiencia.costos.Actividades" />
-                </div>
-                <input v-if="mostrarDescripcionesGasto" type="text" v-model="nuevaExperiencia.descripciones.Actividades" placeholder="Ej: Tour guiado y museo" class="input-desc-opcional" />
-              </div>
-            </div>
-
-            <div class="input-group">
-                <label>🎈 Otros (Taxis locales, recuerdos...)</label>
-                <div class="input-prefix">
-                  <span>Bs.</span>
-                  <input type="number" min="0" step="0.5" v-model="nuevaExperiencia.costos.Otros" />
-                </div>
-                <input v-if="mostrarDescripcionesGasto" type="text" v-model="nuevaExperiencia.descripciones.Otros" placeholder="Ej: Taxis, chocolates, etc." class="input-desc-opcional" />
-            </div>
-
-            <div class="modal-actions">
-              <button type="button" @click="mostrarModalExperiencia = false" class="btn-cancelar">Omitir por ahora</button>
-              <button type="submit" class="btn-guardar">Guardar Experiencia</button>
-            </div>
-          </form>
+    <div v-if="mostrarModalFelicitacion" class="modal-overlay" @click.self="mostrarModalFelicitacion = false">
+      <div class="modal-content" style="max-width: 450px; text-align: center; padding: 35px;">
+        <div style="font-size: 3.5rem; margin-bottom: 15px;">🎉</div>
+        <h2 style="border: none; margin-bottom: 10px;">¡Bienvenido de vuelta, viajero!</h2>
+        <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; margin-bottom: 25px;">
+          Felicidades por completar tu gran ruta <strong>{{ plan?.nombre_viaje }}</strong>. 
+          Tu bitácora y desglose de gastos reales pueden ayudar a que futuros viajeros calculen sus presupuestos con precisión.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button @click="comenzarEvaluacionSecuencial" class="btn-guardar" style="width: 100%; padding: 12px; font-size: 1rem;">
+            📝 Registrar mis gastos reales ahora
+          </button>
+          <button @click="mostrarModalFelicitacion = false" class="btn-cancelar" style="width: 100%; padding: 12px; background: transparent; border: 1px solid #cbd5e1;">
+            Dejarlo para más tarde
+          </button>
         </div>
       </div>
+    </div>
+
+    <div v-if="mostrarModalExperiencia" class="modal-overlay" @click.self="mostrarModalExperiencia = false">
+      <div class="modal-content modal-largo">
+        <h2>🌟 Cuéntanos tu Experiencia</h2>
+        <p class="modal-intro">Tu información ayuda a otros viajeros a calcular sus presupuestos reales.</p>
+        
+        <form @submit.prevent="enviarExperiencia" class="form-plan">
+          
+          <div class="input-group">
+            <label>📍 ¿De qué destino quieres hablar primero?</label>
+            <select v-model="nuevaExperiencia.id_destino" required disabled style="background: #f1f5f9; cursor: not-allowed;">
+              <option v-for="detalle in plan?.detalles" :key="detalle.id_dp" :value="detalle.destino.id_d">
+                {{ detalle.destino.nombre }}
+              </option>
+            </select>
+          </div>
+
+          <div class="input-row">
+            <div class="input-group" style="flex: 2;">
+              <label>📝 Resumen del viaje</label>
+              <textarea v-model="nuevaExperiencia.resumen" rows="3" placeholder="¿Qué tal estuvo el clima? ¿Recomiendas algún lugar en especial?" required></textarea>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
+              <div class="input-group" style="margin-bottom: 0;">
+                <label>⭐ Calificación</label>
+                <select v-model="nuevaExperiencia.estrellas">
+                  <option value="5">⭐⭐⭐⭐⭐</option>
+                  <option value="4">⭐⭐⭐⭐</option>
+                  <option value="3">⭐⭐⭐</option>
+                  <option value="2">⭐⭐</option>
+                  <option value="1">⭐</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label>⏳ Días reales de estadía</label>
+                <input type="number" min="1" v-model="nuevaExperiencia.dias_estadia" required style="width: 100%;" />
+              </div>
+            </div>
+          </div>
+
+          <h3 style="margin-top: 15px; margin-bottom: 10px; color: #1e293b; border-bottom: 2px dashed #e2e8f0; padding-bottom: 5px;">💸 Desglose de Gastos (Opcional)</h3>
+          <p style="font-size: 0.8rem; color: #64748b; margin-top: -5px; margin-bottom: 15px;">Anota el monto TOTAL gastado en toda tu estadía en ESTA ciudad.</p>
+
+          <button type="button" @click="mostrarDescripcionesGasto = !mostrarDescripcionesGasto" class="btn-toggle-desc">
+            {{ mostrarDescripcionesGasto ? '🔼 Ocultar detalles' : '📝 Añadir detalles de los gastos (Opcional)' }}
+          </button>
+
+          <div class="input-row">
+            <div class="input-group">
+              <label>🚌 Pasajes</label>
+              <div class="input-prefix"><span>Bs.</span><input type="number" step="0.5" v-model="nuevaExperiencia.costos.Transporte" /></div>
+              <input v-if="mostrarDescripcionesGasto" type="text" v-model="nuevaExperiencia.descripciones.Transporte" class="input-desc-opcional" />
+            </div>
+            <div class="input-group">
+              <label>🏨 Hospedaje</label>
+              <div class="input-prefix"><span>Bs.</span><input type="number" step="0.5" v-model="nuevaExperiencia.costos.Hospedaje" /></div>
+              <input v-if="mostrarDescripcionesGasto" type="text" v-model="nuevaExperiencia.descripciones.Hospedaje" class="input-desc-opcional" />
+            </div>
+          </div>
+
+          <div class="input-row">
+            <div class="input-group">
+              <label>🍽️ Alimentación</label>
+              <div class="input-prefix"><span>Bs.</span><input type="number" step="0.5" v-model="nuevaExperiencia.costos.Alimentacion" /></div>
+              <input v-if="mostrarDescripcionesGasto" type="text" v-model="nuevaExperiencia.descripciones.Alimentacion" class="input-desc-opcional" />
+            </div>
+            <div class="input-group">
+              <label>🎟️ Actividades</label>
+              <div class="input-prefix"><span>Bs.</span><input type="number" step="0.5" v-model="nuevaExperiencia.costos.Actividades" /></div>
+              <input v-if="mostrarDescripcionesGasto" type="text" v-model="nuevaExperiencia.descripciones.Actividades" class="input-desc-opcional" />
+            </div>
+          </div>
+
+          <div class="input-group">
+              <label>🎈 Otros</label>
+              <div class="input-prefix"><span>Bs.</span><input type="number" step="0.5" v-model="nuevaExperiencia.costos.Otros" /></div>
+              <input v-if="mostrarDescripcionesGasto" type="text" v-model="nuevaExperiencia.descripciones.Otros" class="input-desc-opcional" />
+          </div>
+
+          <div class="modal-actions" style="margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+            <span style="align-self: center; font-size: 0.85rem; color: #64748b; font-weight: bold; margin-right: auto;">
+              Pendientes: {{ destinosPendientesDeEvaluar.length }} {{ destinosPendientesDeEvaluar.length === 1 ? 'destino' : 'destinos' }}
+            </span>
+            <button type="button" @click="mostrarModalExperiencia = false" class="btn-cancelar">Suspender</button>
+            <button type="submit" class="btn-guardar">
+              {{ destinosPendientesDeEvaluar.length > 1 ? 'Guardar y evaluar siguiente ➡️' : 'Guardar y Finalizar 🎉' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import apiViajes from '../api/axios'
 import NavbarGlobal from '../components/NavbarGlobal.vue'
 import { useAuthStore } from '../store/auth'
 
 const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 const plan = ref(null)
-// 💡 CÁLCULO DE DÍAS DE VIAJE
+
 const duracionViaje = computed(() => {
   if (!plan.value?.fecha_inicio || !plan.value?.fecha_fin) return '';
   const inicio = new Date(plan.value.fecha_inicio);
   const fin = new Date(plan.value.fecha_fin);
   const diffTiempo = fin.getTime() - inicio.getTime();
-  const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24)) + 1; // +1 para contar el día de inicio y fin
+  const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24)) + 1;
   return diffDias > 0 ? `(${diffDias} días)` : '';
 })
 
@@ -338,38 +353,35 @@ const esMiPlan = computed(() => {
   return plan.value.usuario.id_u === authStore.usuario.id_u;
 })
 
-// Variables de Control para Modales
 const mostrarModalEditar = ref(false)
 const mostrarModalDestinos = ref(false)
 const mostrarModalPresupuesto = ref(false)
-const mostrarModalExperiencia = ref(false) // 💡 NUEVO MODAL
+const mostrarModalExperiencia = ref(false) 
+const mostrarModalFelicitacion = ref(false) 
 const mostrarDescripcionesGasto = ref(false)
 const editData = ref({})
+const destinosPendientesDeEvaluar = ref([]);
 
+const limpiarFormularioExperiencia = () => {
+  nuevaExperiencia.value.resumen = '';
+  nuevaExperiencia.value.estrellas = 5;
+  nuevaExperiencia.value.dias_estadia = 1;
+  for (let key in nuevaExperiencia.value.costos) {
+    nuevaExperiencia.value.costos[key] = 0;
+    nuevaExperiencia.value.descripciones[key] = '';
+  }
+}
 
-// 💡 ESTRUCTURA DEL FORMULARIO DE EXPERIENCIA
 const nuevaExperiencia = ref({
   id_destino: null,
   resumen: '',
   estrellas: 5,
-  costos: {
-    Transporte: 0,
-    Hospedaje: 0,
-    Alimentacion: 0,
-    Actividades: 0,
-    Otros: 0
-  },
-  // 💡 NUEVO: Guardará los textos opcionales
-  descripciones: {
-    Transporte: '',
-    Hospedaje: '',
-    Alimentacion: '',
-    Actividades: '',
-    Otros: ''
-  }
+  dias_estadia: 1, 
+  // 💡 CORREGIDO: Antes decía 'Others' en inglés
+  costos: { Transporte: 0, Hospedaje: 0, Alimentacion: 0, Actividades: 0, Otros: 0 },
+  descripciones: { Transporte: '', Hospedaje: '', Alimentacion: '', Actividades: '', Otros: '' }
 })
 
-// Variables para el Catálogo Rápido
 const todosLosDestinos = ref([])
 const buscadorDestinos = ref('')
 
@@ -392,12 +404,8 @@ const cerrarModalEditar = () => mostrarModalEditar.value = false
 const guardarEdicionPlan = async () => {
   try {
     const idPlan = plan.value.id_plan;
-    
-    if (editData.value.estado === 'Borrador') {
-      editData.value.visibilidad = 'Privado';
-    }
+    if (editData.value.estado === 'Borrador') editData.value.visibilidad = 'Privado';
 
-    // 💡 DETECTA SI EL PLAN ACABA DE CAMBIAR A "REALIZADO"
     const acabaDeFinalizar = editData.value.estado === 'Realizado' && plan.value.estado !== 'Realizado';
 
     const payloadLimpio = {
@@ -412,80 +420,77 @@ const guardarEdicionPlan = async () => {
     await cargarDetallePlan();
     cerrarModalEditar();
 
-    // 💡 EL DISPARADOR DEL MODAL DE EXPERIENCIAS
     if (acabaDeFinalizar) {
-      if (confirm('¡Bienvenido de vuelta viajero! 🎉\n\n¿Te gustaría registrar tus gastos reales y calificar los destinos para ayudar a la comunidad?')) {
-        // Pre-seleccionamos el primer destino de su itinerario
-        if (plan.value.detalles && plan.value.detalles.length > 0) {
-          nuevaExperiencia.value.id_destino = plan.value.detalles[0].destino.id_d;
-        }
-        // Abrimos el modal
-        mostrarModalExperiencia.value = true; 
-      }
+      mostrarModalFelicitacion.value = true;
     }
   } catch (error) {
-    console.error("Detalle del error:", error.response?.data || error);
-    alert('Error al actualizar la información del plan');
+    console.error("Error:", error);
   }
 }
-const abrirExperiencia = (idDestinoEspecifico) => {
-  // 1. Limpiamos el formulario
-  nuevaExperiencia.value.resumen = '';
-  nuevaExperiencia.value.estrellas = 5;
-  for (let key in nuevaExperiencia.value.costos) {
-    nuevaExperiencia.value.costos[key] = 0;
+
+const comenzarEvaluacionSecuencial = () => {
+  mostrarModalFelicitacion.value = false;
+  destinosPendientesDeEvaluar.value = [...plan.value.detalles];
+  if (destinosPendientesDeEvaluar.value.length > 0) {
+    limpiarFormularioExperiencia();
+    nuevaExperiencia.value.id_destino = destinosPendientesDeEvaluar.value[0].destino.id_d;
+    mostrarModalExperiencia.value = true;
   }
-  
-  // 2. Seleccionamos el destino al que le hizo clic
+}
+
+const abrirExperiencia = (idDestinoEspecifico) => {
+  destinosPendientesDeEvaluar.value = plan.value.detalles.filter(d => d.destino.id_d === idDestinoEspecifico);
+  limpiarFormularioExperiencia();
   nuevaExperiencia.value.id_destino = idDestinoEspecifico;
   
-  // 3. Abrimos el modal
+  // Si le hizo clic a un destino específico desde la lista de estadías, le cargamos por defecto los días estimados que planeó
+  const destinoSeleccionado = plan.value.detalles.find(d => d.destino.id_d === idDestinoEspecifico);
+  if (destinoSeleccionado) {
+    nuevaExperiencia.value.dias_estadia = destinoSeleccionado.dias_estadia || 1;
+  }
+  
   mostrarModalExperiencia.value = true;
 }
 
-// 💡 FUNCIÓN REAL PARA ENVIAR EL FORMULARIO
 const enviarExperiencia = async () => {
-  if (!nuevaExperiencia.value.id_destino) {
-    alert("Por favor, selecciona el destino que estás evaluando.");
-    return;
-  }
-  
-  if (nuevaExperiencia.value.resumen.length < 10) {
-    alert("El resumen es muy corto. Cuéntanos un poco más.");
-    return;
-  }
+  if (!nuevaExperiencia.value.id_destino || nuevaExperiencia.value.resumen.length < 10) return;
 
   try {
-    // 1. Transformamos el objeto de costos en un Array para el Backend
     const arregloCostos = Object.keys(nuevaExperiencia.value.costos).map(key => {
-      const textoUsuario = nuevaExperiencia.value.descripciones[key].trim();
+      const texto = nuevaExperiencia.value.descripciones[key].trim();
       return {
         categoria: key,
-        // 💡 Si el usuario escribió algo, lo usamos. Si no, texto genérico.
-        descripcion_gasto: textoUsuario !== '' ? textoUsuario : `Gasto en ${key}`,
+        descripcion_gasto: texto !== '' ? texto : `Gasto en ${key}`,
         monto: Number(nuevaExperiencia.value.costos[key] || 0)
       };
     });
 
-    // Armamos el paquete de datos final
     const payload = {
       id_destino: nuevaExperiencia.value.id_destino,
       resumen_experiencia: nuevaExperiencia.value.resumen,
       puntuacion: Number(nuevaExperiencia.value.estrellas),
-      id_usuario: authStore.usuario.id_u, // 💡 Obligatorio sacar el ID de la tienda authStore
-      fecha_viaje: plan.value.fecha_fin,  // Asumimos que terminó el viaje en esta fecha
+      dias_estadia: Number(nuevaExperiencia.value.dias_estadia),
+      id_usuario: authStore.usuario.id_u,
+      fecha_viaje: plan.value.fecha_fin,
       costos: arregloCostos
     };
 
-    // Disparamos la petición
     await apiViajes.post('/experiencias', payload);
     
-    alert("¡Misión cumplida! Tu experiencia ayudará a otros viajeros.");
-    mostrarModalExperiencia.value = false;
+    destinosPendientesDeEvaluar.value = destinosPendientesDeEvaluar.value.filter(d => d.destino.id_d !== nuevaExperiencia.value.id_destino);
+
+    if (destinosPendientesDeEvaluar.value.length > 0) {
+      limpiarFormularioExperiencia();
+      nuevaExperiencia.value.id_destino = destinosPendientesDeEvaluar.value[0].destino.id_d;
+      const siguienteDestino = plan.value.detalles.find(d => d.destino.id_d === nuevaExperiencia.value.id_destino);
+      if (siguienteDestino) nuevaExperiencia.value.dias_estadia = siguienteDestino.dias_estadia || 1;
+    } else {
+      mostrarModalExperiencia.value = false;
+      await cargarDetallePlan();
+    }
     
   } catch (error) {
-    console.error("Error del servidor:", error.response?.data || error);
-    alert("Ocurrió un error al guardar tu experiencia. Revisa la consola (F12).");
+    console.error(error);
   }
 }
 
@@ -493,9 +498,7 @@ const cargarDestinosParaModal = async () => {
   try {
     const res = await apiViajes.get('/destinos')
     todosLosDestinos.value = res.data
-  } catch (error) {
-    console.error("Error al cargar destinos")
-  }
+  } catch (error) { console.error(error); }
 }
 
 const abrirModalDestinos = () => {
@@ -518,38 +521,25 @@ const agregarDestinoAlPlan = async (idDestino) => {
     const idPlan = plan.value.id_plan;
     await apiViajes.post(`/planes/${idPlan}/destinos`, { id_destino: idDestino });
     await cargarDetallePlan(); 
-    alert('¡Destino añadido! El presupuesto se ha actualizado.');
-  } catch (error) {
-    console.error("Error al añadir destino:", error);
-    alert('Hubo un error al añadir el destino a tu ruta.');
-  }
+  } catch (error) { console.error(error); }
 }
 
-// 💡 Función rápida para sumar o restar días
 const cambiarDias = async (idDp, nuevosDias) => {
-  if (nuevosDias < 1) return; // No se puede viajar 0 días
+  if (nuevosDias < 1) return;
   try {
     const idPlan = plan.value.id_plan;
-    // Llamamos al nuevo endpoint PATCH
     await apiViajes.patch(`/planes/${idPlan}/destinos/${idDp}`, { dias_estadia: nuevosDias });
-    
-    // Recargamos silenciosamente la pantalla. ¡El presupuesto se actualizará solo!
     await cargarDetallePlan(); 
-  } catch (error) {
-    console.error("Error al cambiar días:", error);
-    alert('Hubo un error al actualizar los días de estadía.');
-  }
+  } catch (error) { console.error(error); }
 }
 
-// 💡 CÁLCULO DE DÍAS MÁXIMOS DEL PLAN
 const diasMaximosPermitidos = computed(() => {
-  if (!plan.value?.fecha_inicio || !plan.value?.fecha_fin) return 999; // Si no hay fechas, no hay límite
+  if (!plan.value?.fecha_inicio || !plan.value?.fecha_fin) return 999;
   const inicio = new Date(plan.value.fecha_inicio);
   const fin = new Date(plan.value.fecha_fin);
   return Math.ceil((fin.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 });
 
-// 💡 CÁLCULO DE DÍAS YA ASIGNADOS A DESTINOS
 const diasYaAsignados = computed(() => {
   if (!plan.value?.detalles) return 0;
   return plan.value.detalles.reduce((acc, detalle) => acc + (detalle.dias_estadia || 1), 0);
@@ -561,10 +551,7 @@ const quitarDestino = async (idDp) => {
       const idPlan = plan.value.id_plan;
       await apiViajes.delete(`/planes/${idPlan}/destinos/${idDp}`);
       await cargarDetallePlan(); 
-    } catch (error) {
-      console.error("Error al quitar destino:", error);
-      alert('Hubo un error al quitar el destino.');
-    }
+    } catch (error) { console.error(error); }
   }
 }
 
@@ -574,19 +561,19 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* NAVEGACIÓN Y CABECERA */
-.layout { background-color: #f8fafc; min-height: 100vh; }
+/* 💡 NAVEGACIÓN Y CABECERA */
+.layout { background-color: var(--bg-layout); min-height: 100vh; }
 .detalle-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; font-family: 'Segoe UI', sans-serif; }
 .back-nav { margin-bottom: 20px; }
-.btn-back { display: inline-block; color: #64748b; text-decoration: none; font-weight: 600; font-size: 1rem; transition: all 0.2s; padding: 5px 10px; border-radius: 6px; margin-left: -10px; }
-.btn-back:hover { background-color: #e2e8f0; color: #0f172a; }
+.btn-back { display: inline-block; color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 1rem; transition: all 0.2s; padding: 5px 10px; border-radius: 6px; margin-left: -10px; }
+.btn-back:hover { background-color: var(--bg-header); color: var(--text-main); }
 
-.plan-header-card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; border: 1px solid #e2e8f0; }
-.title-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 20px; }
+.plan-header-card { background: var(--bg-card); border-radius: 15px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; border: 1px solid var(--color-border); }
+.title-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 20px; margin-bottom: 20px; }
 .title-left { display: flex; align-items: center; gap: 15px; }
-.title-left h1 { margin: 0; color: #1e293b; font-size: 2rem; }
-.btn-editar { background: white; border: 1px solid #cbd5e1; color: #475569; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-.btn-editar:hover { background: #f1f5f9; }
+.title-left h1 { margin: 0; color: var(--text-main); font-size: 2rem; }
+.btn-editar { background: var(--bg-card); border: 1px solid var(--color-border); color: var(--text-main); padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+.btn-editar:hover { background: var(--bg-header); }
 
 .estado-badge { padding: 6px 12px; border-radius: 12px; font-weight: bold; text-transform: uppercase; font-size: 0.85rem;}
 .estado-badge.borrador { background: #fef3c7; color: #d97706; }
@@ -594,195 +581,100 @@ onMounted(() => {
 .estado-badge.realizado { background: #d1fae5; color: #059669; }
 
 .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-.info-item { display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #f1f5f9; }
-.info-item.highlight { background: #eff6ff; border-color: #bfdbfe; }
+.info-item { display: flex; align-items: center; gap: 15px; background: var(--bg-layout); padding: 15px; border-radius: 10px; border: 1px solid var(--color-border); }
+.info-item.highlight { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
 
-/* 💡 EFECTO BOTÓN EN PRESUPUESTO */
 .click-presupuesto { cursor: pointer; transition: all 0.2s; display: flex; flex-direction: row; }
-.click-presupuesto:hover { background: #dbeafe; transform: scale(1.02); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); }
-.click-aviso { color: #3b82f6; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-top: 4px; display: block; }
+.click-presupuesto:hover { background: rgba(59, 130, 246, 0.15); transform: scale(1.02); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); }
+.click-aviso { color: var(--color-primary); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-top: 4px; display: block; }
 
 .icon { font-size: 1.8rem; }
-.label { margin: 0; font-size: 0.85rem; color: #64748b; font-weight: bold; text-transform: uppercase; }
-.value { margin: 5px 0 0 0; font-size: 1.1rem; color: #0f172a; font-weight: bold; }
+.label { margin: 0; font-size: 0.85rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase; }
+.value { margin: 5px 0 0 0; font-size: 1.1rem; color: var(--text-main); font-weight: bold; }
 
-/* SECCIÓN DESTINOS */
-.destinos-section { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+/* 💡 SECCIÓN DESTINOS */
+.destinos-section { background: var(--bg-card); border-radius: 15px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--color-border); }
 .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.section-header h2 { margin: 0; color: #1e293b; }
-.btn-explorar { background: #10b981; color: white; padding: 10px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: background 0.3s; }
-.btn-explorar:hover { background: #059669; }
-.empty-destinos { text-align: center; padding: 40px 20px; background: #f8fafc; border-radius: 10px; border: 2px dashed #cbd5e1; color: #64748b; }
+.section-header h2 { margin: 0; color: var(--text-main); }
+.btn-explorar { background: var(--color-success); color: white; padding: 10px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: background 0.3s; }
+.btn-explorar:hover { opacity: 0.9; }
+.empty-destinos { text-align: center; padding: 40px 20px; background: var(--bg-layout); border-radius: 10px; border: 2px dashed var(--color-border); color: var(--text-muted); }
 
 .destinos-list { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-.itinerario-card { display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; transition: transform 0.2s; }
-.itinerario-card:hover { transform: translateX(5px); border-color: #cbd5e1; }
-.orden-circulo { width: 40px; height: 40px; background: #3b82f6; color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; font-weight: bold; flex-shrink: 0; margin-right: 15px; }
+.itinerario-card { display: flex; align-items: center; background: var(--bg-layout); border: 1px solid var(--color-border); border-radius: 12px; padding: 15px; transition: transform 0.2s; }
+.itinerario-card:hover { transform: translateX(5px); border-color: var(--color-primary); }
+.orden-circulo { width: 40px; height: 40px; background: var(--color-primary); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; font-weight: bold; flex-shrink: 0; margin-right: 15px; }
 .destino-info { flex: 1; }
-.destino-info h3 { margin: 0 0 5px 0; color: #1e293b; font-size: 1.2rem; }
-.destino-info p { margin: 0; color: #64748b; font-size: 0.9rem; }
-.btn-quitar { background: #fee2e2; border: none; padding: 10px; border-radius: 8px; cursor: pointer; transition: background 0.2s; margin-left: 15px; }
-.btn-quitar:hover { background: #fca5a5; }
+.destino-info h3 { margin: 0 0 5px 0; color: var(--text-main); font-size: 1.2rem; }
+.destino-info p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+.btn-quitar { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px; border-radius: 8px; cursor: pointer; transition: background 0.2s; margin-left: 15px; color: var(--color-danger); }
+.btn-quitar:hover { background: rgba(239, 68, 68, 0.2); }
 
-/* MODALES GENERALES 
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); }
-.modal-content { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto;}
-.modal-content.modal-largo { max-width: 600px; }
-.modal-content h2 { margin-top: 0; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; }
-.modal-intro { color: #64748b; font-size: 0.95rem; margin-bottom: 20px; line-height: 1.4; }*/
-
-/* ======================================= */
-/* MODALES GENERALES Y FACTURA             */
-/* ======================================= */
-.modal-overlay { 
-  position: fixed; 
-  top: 0; left: 0; right: 0; bottom: 0; 
-  background: rgba(15, 23, 42, 0.75); 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-  z-index: 1000; 
-  backdrop-filter: blur(3px); 
-  padding: 20px; 
-  box-sizing: border-box; 
-}
-
-.modal-content { 
-  background: white; 
-  padding: 30px; 
-  border-radius: 15px; 
-  width: 100%; 
-  max-width: 500px; 
-  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); 
-  max-height: 85vh; /* 💡 ALTURA MÁXIMA PARA FORZAR EL SCROLL */
-  overflow-y: auto; /* 💡 EL SCROLL MAESTRO VIVE AQUÍ */
-}
-
-.modal-content.modal-largo { 
-  max-width: 650px; 
-}
-
-.modal-content h2 { margin-top: 0; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; }
-.modal-intro { color: #64748b; font-size: 0.95rem; margin-bottom: 20px; line-height: 1.4; }
-
-/* 💡 ESTILOS DE LA FACTURA LIBERADOS */
-.factura-container { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 20px; 
-  max-height: none !important; 
-  overflow-y: visible !important; 
-}
-
-.factura-destino { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
-.factura-header { background: #f8fafc; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
-.factura-header h3 { margin: 0; font-size: 1.1rem; color: #1e293b; }
-.factura-header h3 span { color: #64748b; font-size: 0.9rem; font-weight: normal; }
-.subtotal-badge { background: #dbeafe; color: #1d4ed8; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; }
-
-.tabla-costos { width: 100%; border-collapse: collapse; }
-.tabla-costos td { padding: 12px 10px; border-bottom: 1px solid #e2e8f0; font-size: 0.95rem; color: #334155; }
-.text-right { text-align: right !important; }
-.font-mono { font-family: monospace; font-size: 1.05rem; }
-
-.factura-gran-total { display: flex; justify-content: space-between; align-items: center; background: #1e293b; color: white; padding: 15px 20px; border-radius: 8px; margin-top: 10px; font-size: 1.2rem; font-weight: bold; }
-.total-monto { color: #34d399; font-family: monospace; font-size: 1.4rem; }
-
-/* 💡 ESTILOS TABLA DE COSTOS */
-.tabla-costos { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-.tabla-costos th, .tabla-costos td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 1rem; color: #334155;}
-.tabla-costos th { background-color: #f8fafc; font-weight: bold; color: #1e293b; }
-.text-right { text-align: right !important; }
-.font-mono { font-family: monospace; font-size: 1.05rem; }
-.row-total { background-color: #eff6ff; font-size: 1.1rem; }
-.row-total td { border-top: 2px solid #3b82f6; border-bottom: 2px solid #3b82f6; }
-.total-color { color: #2563eb; }
-
-/* ESTILOS DE LA FACTURA-PRESUPUESTO*/
-.factura-container { display: flex; flex-direction: column; gap: 20px; max-height: 60vh; overflow-y: auto; padding-right: 10px; }
-.factura-destino { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
-.factura-header { background: #f8fafc; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
-.factura-header h3 { margin: 0; font-size: 1.1rem; color: #1e293b; }
-.factura-header h3 span { color: #64748b; font-size: 0.9rem; font-weight: normal; }
-.subtotal-badge { background: #dbeafe; color: #1d4ed8; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; }
-.factura-gran-total { display: flex; justify-content: space-between; align-items: center; background: #1e293b; color: white; padding: 15px 20px; border-radius: 8px; margin-top: 10px; font-size: 1.2rem; font-weight: bold; }
-.total-monto { color: #34d399; font-family: monospace; font-size: 1.4rem; }
-
-/* ESTILOS DEL CONTADOR DE DÍAS */
-.control-dias { display: flex; align-items: center; background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin: 0 15px; }
-.btn-dia { background: #f1f5f9; border: none; padding: 8px 12px; font-weight: bold; color: #475569; cursor: pointer; transition: background 0.2s; }
-.btn-dia:hover:not(:disabled) { background: #e2e8f0; color: #0f172a; }
+/* 💡 CONTADOR DE DÍAS */
+.control-dias { display: flex; align-items: center; background: var(--bg-card); border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden; margin: 0 15px; }
+.btn-dia { background: var(--bg-header); border: none; padding: 8px 12px; font-weight: bold; color: var(--text-main); cursor: pointer; transition: background 0.2s; }
+.btn-dia:hover:not(:disabled) { background: var(--color-border); color: var(--text-main); }
 .btn-dia:disabled { opacity: 0.5; cursor: not-allowed; }
-.dias-texto { padding: 0 15px; font-size: 0.9rem; font-weight: 600; color: #1e293b; min-width: 50px; text-align: center; }
-.dias-texto-solo { font-size: 0.9rem; font-weight: 600; color: #64748b; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; }
+.dias-texto { padding: 0 15px; font-size: 0.9rem; font-weight: 600; color: var(--text-main); min-width: 50px; text-align: center; }
+.dias-texto-solo { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); background: var(--bg-header); padding: 6px 12px; border-radius: 6px; }
 
 .btn-evaluar { background: #fef3c7; border: 1px solid #f59e0b; padding: 6px 12px; border-radius: 6px; cursor: pointer; color: #b45309; font-weight: bold; margin-left: 10px; } .btn-evaluar:hover { background: #fde68a; }
 
-/* BOTONES FORMULARIO */
+/* 💡 MODALES GENERALES Y FACTURA */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); padding: 20px; box-sizing: border-box; }
+.modal-content { background: var(--bg-card); padding: 30px; border-radius: 15px; width: 100%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); max-height: 85vh; overflow-y: auto; border: 1px solid var(--color-border); }
+.modal-content.modal-largo { max-width: 650px; }
+
+.modal-content h2 { margin-top: 0; color: var(--text-main); border-bottom: 2px solid var(--color-border); padding-bottom: 10px; margin-bottom: 20px; }
+.modal-intro { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.4; }
+
+/* 💡 ESTILOS DE LA FACTURA */
+.factura-container { display: flex; flex-direction: column; gap: 20px; max-height: none !important; overflow-y: visible !important; }
+.factura-destino { border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden; background: var(--bg-layout); }
+.factura-header { background: var(--bg-header); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); }
+.factura-header h3 { margin: 0; font-size: 1.1rem; color: var(--text-main); }
+.factura-header h3 span { color: var(--text-muted); font-size: 0.9rem; font-weight: normal; }
+.subtotal-badge { background: rgba(59, 130, 246, 0.1); color: var(--color-primary); padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.9rem; border: 1px solid rgba(59, 130, 246, 0.3); }
+
+.tabla-costos { width: 100%; border-collapse: collapse; margin-bottom: 0; }
+.tabla-costos td { padding: 12px 10px; border-bottom: 1px solid var(--color-border); font-size: 0.95rem; color: var(--text-main); }
+.text-right { text-align: right !important; }
+.font-mono { font-family: monospace; font-size: 1.05rem; }
+
+.factura-gran-total { display: flex; justify-content: space-between; align-items: center; background: var(--bg-header); color: var(--text-main); padding: 15px 20px; border-radius: 8px; margin-top: 10px; font-size: 1.2rem; font-weight: bold; border: 1px solid var(--color-primary); }
+.total-monto { color: var(--color-primary); font-family: monospace; font-size: 1.4rem; }
+
+/* 💡 BOTONES FORMULARIO */
 .form-plan .input-group { margin-bottom: 15px; }
 .form-plan .input-row { display: flex; gap: 15px; }
 .form-plan .input-row .input-group { flex: 1; }
-.form-plan label { display: block; margin-bottom: 5px; color: #475569; font-weight: 600; font-size: 0.9rem; }
-.form-plan input, .form-plan select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; box-sizing: border-box; background: white;}
+.form-plan label { display: block; margin-bottom: 5px; color: var(--text-main); font-weight: 600; font-size: 0.9rem; }
+.form-plan input, .form-plan select { width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: 6px; font-size: 1rem; box-sizing: border-box; background: var(--bg-layout); color: var(--text-main); }
+.form-plan input:focus, .form-plan select:focus { outline: none; border-color: var(--color-primary); }
 .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
-.btn-cancelar { background: #f1f5f9; color: #475569; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.btn-cancelar:hover { background: #e2e8f0; }
-.btn-guardar { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.btn-guardar:hover { background: #2563eb; }
+.btn-cancelar { background: var(--bg-header); color: var(--text-main); border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-cancelar:hover { opacity: 0.8; }
+.btn-guardar { background: var(--color-primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-guardar:hover { opacity: 0.9; }
 
-/* CATÁLOGO RÁPIDO */
-.search-rapido { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; margin-bottom: 15px; box-sizing: border-box; outline: none; }
+/* 💡 CATÁLOGO RÁPIDO */
+.search-rapido { width: 100%; padding: 12px; border: 2px solid var(--color-border); border-radius: 8px; font-size: 1rem; margin-bottom: 15px; box-sizing: border-box; outline: none; background: var(--bg-layout); color: var(--text-main); }
 .lista-destinos-rapida { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; }
-.destino-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; }
-.badge-mini { background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
-.btn-add-mini { background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.loading { text-align: center; padding: 50px; font-size: 1.2rem; color: #64748b; }
+.destino-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: var(--bg-layout); border: 1px solid var(--color-border); border-radius: 8px; }
+.badge-mini { background: rgba(59, 130, 246, 0.1); color: var(--color-primary); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+.btn-add-mini { background: var(--color-success); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.loading { text-align: center; padding: 50px; font-size: 1.2rem; color: var(--text-muted); }
 
-/* Estilos extra para formulario de experiencia */
-.form-plan textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 0.95rem; resize: vertical; }
-.input-prefix { display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; background: white; }
-.input-prefix span { background: #f1f5f9; padding: 10px; color: #475569; font-weight: bold; border-right: 1px solid #cbd5e1; }
-.input-prefix input { border: none !important; border-radius: 0 !important; width: 100%; outline: none; }
+/* 💡 FORMULARIO EXPERIENCIA */
+.form-plan textarea { width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: 6px; font-family: inherit; font-size: 0.95rem; resize: vertical; background: var(--bg-layout); color: var(--text-main); }
+.input-prefix { display: flex; align-items: center; border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden; background: var(--bg-layout); }
+.input-prefix span { background: var(--bg-header); padding: 10px; color: var(--text-main); font-weight: bold; border-right: 1px solid var(--color-border); }
+.input-prefix input { border: none !important; border-radius: 0 !important; width: 100%; outline: none; background: transparent; color: var(--text-main); }
 .input-prefix input:focus { box-shadow: none; }
 
-/* Botón de divulgación estilo Píldora */
-.btn-toggle-desc { 
-  background: #f8fafc; 
-  border: 1px solid #cbd5e1; 
-  color: #475569; 
-  font-size: 0.85rem; 
-  font-weight: 600; 
-  cursor: pointer; 
-  padding: 8px 15px; 
-  border-radius: 20px; 
-  margin-bottom: 15px; 
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-}
-.btn-toggle-desc:hover { 
-  background: #e2e8f0; 
-  color: #0f172a; 
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
+.btn-toggle-desc { background: var(--bg-header); border: 1px solid var(--color-border); color: var(--text-main); font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 8px 15px; border-radius: 20px; margin-bottom: 15px; display: inline-flex; align-items: center; }
+.btn-toggle-desc:hover { background: var(--color-border); }
 
-/* Input opcional estilo "nota adjunta" */
-.input-desc-opcional { 
-  margin-top: -3px; /* Se sube un poco para pegarse al input de arriba */
-  width: 100%; 
-  padding: 8px 12px; 
-  font-size: 0.85rem; 
-  border: 1px solid #cbd5e1; 
-  border-top: 1px dashed #94a3b8; 
-  border-radius: 0 0 6px 6px; /* Redondeado solo abajo */
-  background: #f1f5f9; 
-  box-sizing: border-box; 
-  color: #334155;
-  transition: background 0.2s;
-}
-.input-desc-opcional:focus {
-  background: #ffffff;
-  border-color: #3b82f6;
-  outline: none;
-}
+.input-desc-opcional { margin-top: -3px; width: 100%; padding: 8px 12px; font-size: 0.85rem; border: 1px solid var(--color-border); border-top: 1px dashed var(--color-border); border-radius: 0 0 6px 6px; background: var(--bg-header); box-sizing: border-box; color: var(--text-main); }
+.input-desc-opcional:focus { background: var(--bg-card); border-color: var(--color-primary); outline: none; }
 </style>

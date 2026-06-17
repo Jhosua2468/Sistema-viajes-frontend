@@ -106,25 +106,29 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.layout { background-color: #f8fafc; min-height: 100vh; }
+.layout { background-color: var(--bg-layout); min-height: 100vh; }
 .comunidad-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; font-family: 'Segoe UI', sans-serif; }
 .header-section { text-align: center; margin-bottom: 40px; }
-.header-section h1 { color: #0f172a; margin-bottom: 10px; font-size: 2.5rem; }
-.header-section p { color: #64748b; font-size: 1.1rem; }
+.header-section h1 { color: var(--text-main); margin-bottom: 10px; font-size: 2.5rem; }
+.header-section p { color: var(--text-muted); font-size: 1.1rem; }
 
 .planes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
-.plan-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;}
-.plan-header { margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
-.plan-header h3 { margin: 0 0 10px 0; color: #3b82f6; font-size: 1.3rem; }
+
+.plan-card { 
+  background: var(--bg-card); border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; 
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;
+}
+.plan-header { margin-bottom: 15px; border-bottom: 1px solid var(--color-border); padding-bottom: 10px; }
+.plan-header h3 { margin: 0 0 10px 0; color: var(--color-primary); font-size: 1.3rem; }
 .autor-badge { background: #fef08a; color: #a16207; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; }
 
-.plan-body p { margin: 8px 0; color: #475569; font-size: 0.95rem; }
+.plan-body p { margin: 8px 0; color: var(--text-muted); font-size: 0.95rem; }
 
 .plan-footer { display: flex; gap: 10px; margin-top: 20px; }
-.btn-ver { flex: 1; background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; color: #3b82f6; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-.btn-ver:hover { background: #eff6ff; border-color: #bfdbfe; }
-.btn-clonar { flex: 1; background: #3b82f6; border: none; padding: 10px; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-.btn-clonar:hover { background: #2563eb; }
+.btn-ver { flex: 1; background: var(--bg-layout); border: 1px solid var(--color-border); padding: 10px; border-radius: 6px; color: var(--color-primary); font-weight: bold; cursor: pointer; transition: all 0.2s; }
+.btn-ver:hover { background: var(--bg-header); }
+.btn-clonar { flex: 1; background: var(--color-primary); border: none; padding: 10px; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+.btn-clonar:hover { opacity: 0.9; }
 
-.loading, .empty-state { text-align: center; padding: 60px 20px; font-size: 1.2rem; color: #64748b; background: white; border-radius: 15px; border: 2px dashed #cbd5e1; }
+.loading, .empty-state { text-align: center; padding: 60px 20px; font-size: 1.2rem; color: var(--text-muted); background: var(--bg-card); border-radius: 15px; border: 2px dashed var(--color-border); }
 </style>

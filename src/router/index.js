@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import MiPerfilView from '../views/MiPerfilView.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: () => import('../views/HomeView.vue') },
@@ -37,6 +38,12 @@ const routes = [
     component: () => import('../views/MisExperienciasView.vue'),
     meta: { requiresAuth: true } 
   },
+  {
+  path: '/perfil',
+  name: 'Perfil',
+  component: MiPerfilView,
+  meta: { requiresAuth: true }
+},
   
 ]
 

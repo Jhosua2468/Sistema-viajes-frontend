@@ -161,52 +161,63 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.layout { background-color: #f8fafc; min-height: 100vh; }
+.layout { background-color: var(--bg-layout); min-height: 100vh; }
 .planes-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; font-family: 'Segoe UI', sans-serif; }
 .header-section { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 40px; }
-.header-section h1 { color: #1e293b; margin-bottom: 10px; font-size: 2.5rem; }
-.header-section p { color: #64748b; font-size: 1.1rem; margin-bottom: 20px; }
+.header-section h1 { color: var(--text-main); margin-bottom: 10px; font-size: 2.5rem; }
+.header-section p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 20px; }
 
-.btn-crear { background-color: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
-.btn-crear:hover { background-color: #059669; }
+.btn-crear { background-color: var(--color-success); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: opacity 0.3s; }
+.btn-crear:hover { opacity: 0.9; }
 
 .planes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
-.plan-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;}
-.plan-header { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; gap: 8px;}
-.plan-header h3 { margin: 0; color: #3b82f6; font-size: 1.25rem; }
+
+/* 💡 TARJETAS DINÁMICAS */
+.plan-card { 
+  background: var(--bg-card); border: 1px solid var(--color-border); border-radius: 12px; padding: 20px; 
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;
+}
+.plan-header { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid var(--color-border); padding-bottom: 10px; gap: 8px;}
+.plan-header h3 { margin: 0; color: var(--color-primary); font-size: 1.25rem; }
 
 .badges-container { display: flex; gap: 8px; }
+/* Los badges de estado se mantienen fijos para que el semáforo (amarillo, azul, verde) funcione igual de noche */
 .estado-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
 .estado-badge.borrador { background: #fef3c7; color: #d97706; }
 .estado-badge.planificado { background: #dbeafe; color: #1d4ed8; }
 .estado-badge.realizado { background: #d1fae5; color: #059669; }
 
-.visibilidad-badge { background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; cursor: help; }
+.visibilidad-badge { background: var(--bg-header); color: var(--text-muted); padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; cursor: help; }
 
-.plan-body p { margin: 8px 0; color: #475569; font-size: 0.95rem; }
+.plan-body p { margin: 8px 0; color: var(--text-muted); font-size: 0.95rem; }
 
 .plan-footer { display: flex; gap: 10px; margin-top: 20px; }
-.btn-ver { flex: 1; background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px; border-radius: 6px; color: #334155; font-weight: bold; cursor: pointer; transition: all 0.2s;}
-.btn-ver:hover { background: #e2e8f0; }
-.btn-eliminar { background: #fee2e2; border: 1px solid #fecaca; padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s;}
-.btn-eliminar:hover { background: #f87171; }
+.btn-ver { flex: 1; background: var(--bg-layout); border: 1px solid var(--color-border); padding: 8px; border-radius: 6px; color: var(--text-main); font-weight: bold; cursor: pointer; transition: all 0.2s;}
+.btn-ver:hover { background: var(--bg-header); }
+.btn-eliminar { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 12px; border-radius: 6px; cursor: pointer; color: var(--color-danger); transition: all 0.2s;}
+.btn-eliminar:hover { background: rgba(239, 68, 68, 0.2); }
 
-.empty-state { text-align: center; padding: 60px 20px; background: white; border-radius: 15px; border: 2px dashed #cbd5e1; }
-.empty-state h2 { color: #475569; margin-bottom: 10px; }
+.empty-state { text-align: center; padding: 60px 20px; background: var(--bg-card); border-radius: 15px; border: 2px dashed var(--color-border); }
+.empty-state h2 { color: var(--text-muted); margin-bottom: 10px; }
 
-/* MODAL */
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); }
-.modal-content { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-.modal-content h2 { color: #1e293b; margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+/* MODALES DINÁMICOS */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); }
+.modal-content { background: var(--bg-card); padding: 30px; border-radius: 15px; width: 100%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); }
+.modal-content h2 { color: var(--text-main); margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid var(--color-border); padding-bottom: 10px; }
+
 .form-plan .input-group { margin-bottom: 15px; }
 .form-plan .input-row { display: flex; gap: 15px; }
 .form-plan .input-row .input-group { flex: 1; }
-.form-plan label { display: block; margin-bottom: 5px; color: #475569; font-weight: 600; font-size: 0.9rem; }
-.form-plan input, .select-visibilidad { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; box-sizing: border-box; background: white; }
-.form-plan input:focus, .select-visibilidad:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+.form-plan label { display: block; margin-bottom: 5px; color: var(--text-main); font-weight: 600; font-size: 0.9rem; }
+.form-plan input, .select-visibilidad, .form-plan select { 
+  width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: 6px; font-size: 1rem; box-sizing: border-box; 
+  background: var(--bg-layout); color: var(--text-main); 
+}
+.form-plan input:focus, .select-visibilidad:focus, .form-plan select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); background: var(--bg-card); }
+
 .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
-.btn-cancelar { background: #f1f5f9; color: #475569; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.btn-cancelar:hover { background: #e2e8f0; }
-.btn-guardar { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.btn-guardar:hover { background: #2563eb; }
+.btn-cancelar { background: var(--bg-header); color: var(--text-main); border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-cancelar:hover { opacity: 0.8; }
+.btn-guardar { background: var(--color-primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-guardar:hover { opacity: 0.9; }
 </style>
